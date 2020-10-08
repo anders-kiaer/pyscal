@@ -535,7 +535,7 @@ class PyscalFactory(object):
         a dataframe.
 
         Checks validity in SATNUM and CASE columns.
-        Ensures case-insensitivenes SATNUM, CASE, TAG and COMMENT
+        Ensures case-insensitiveness SATNUM, CASE, TAG and COMMENT
 
         Merges COMMENT into TAG column, as only TAG is picked up downstream.
         Adds a prexix "SATNUM <number>" to all tags.
@@ -669,6 +669,11 @@ class PyscalFactory(object):
         input_df["TAG"] = (
             "SATNUM " + input_df["SATNUM"].astype(str) + " " + input_df["TAG"]
         )
+
+        # Fill the swirr column with zeros if it exists. This is a natural way to do
+        # it in a spreadsheet if capillary pressure is nonzero for only certain SATNUMs
+        # if "SWIRR" in input_df:
+        #    input_df["SWIRR"] = input_df[["SWIRR"]].fillna(value=0.0)
 
         # Check that we are able to make something out of the first row:
         firstrow = input_df.loc[0, :]
@@ -1007,7 +1012,5 @@ def check_deprecated(params):
     for key in params:
         if key.lower() in DEPRECATED:
             logger.warning(
-                "The key %s is deprecated %s",
-                key,
-                DEPRECATED[key.lower()],
+                "The key %s is deprecated %s", key, DEPRECATED[key.lower()],
             )

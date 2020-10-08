@@ -790,6 +790,32 @@ def test_case_aliasing():
         )
 
 
+def test_swirr_partially_missing():
+    """Test that swirr can be present for only a subset of the rows,
+    and interpreted as zero when not there."""
+    dframe = pd.DataFrame(
+        columns=[
+            "SATNUM",
+            "Nw",
+            "Now",
+            "swl",
+            "swirr",
+            "a",
+            "b",
+            "poro_ref",
+            "perm_ref",
+            "drho",
+        ],
+        data=[
+            [1, 2, 2, 0.2, 0.1, 2, -2, 0.2, 100, 300],
+            [2, 3, 3, 0.1, np.nan, np.nan, np.nan, np.nan, np.nan],
+        ],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    print(p_list.SWOF())
+
+
 def test_corey_let_mix():
     """Test that we can supply a dataframe where some SATNUMs
     have Corey and others have LET"""
